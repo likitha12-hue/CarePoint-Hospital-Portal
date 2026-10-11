@@ -1,0 +1,52 @@
+{% extends "hospital/base.html" %}
+{% block title %}Staff Panel · CarePoint{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-1">Appointment management</h2>
+<p class="text-muted">Confirm, complete or cancel patient appointments.</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="cp-stat"><i class="bi bi-hourglass-split text-warning"></i><div><div class="n">{{ counts.Pending }}</div><div class="l">Pending</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="cp-stat"><i class="bi bi-patch-check text-primary"></i><div><div class="n">{{ counts.Confirmed }}</div><div class="l">Confirmed</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="cp-stat"><i class="bi bi-check-circle text-success"></i><div><div class="n">{{ counts.Completed }}</div><div class="l">Completed</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="cp-stat"><i class="bi bi-x-circle text-danger"></i><div><div class="n">{{ counts.Cancelled }}</div><div class="l">Cancelled</div></div></div></div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <a href="{% url 'hospital:staff_appointments' %}" class="cp-chip {% if not selected_status %}active{% endif %}">All</a>
+  {% for s in statuses %}<a href="?status={{ s }}" class="cp-chip {% if selected_status == s %}active{% endif %}">{{ s }}</a>{% endfor %}
+</div>
+
+<div class="cp-card p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table cp-table align-middle mb-0">
+      <thead><tr><th>#</th><th>Patient</th><th>Doctor</th><th>When</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for a in appointments %}
+        <tr>
+          <td>{{ a.pk }}</td>
+          <td><div class="fw-semibold">{{ a.patient }}</div><div class="small text-muted">{{ a.patient.phone }}</div></td>
+          <td>Dr. {{ a.doctor.name }}<div class="small text-muted">{{ a.doctor.department }}</div></td>
+          <td>{{ a.date|date:"d M Y" }}<div class="small text-muted">{{ a.time_slot }}</div></td>
+          <td class="small">{{ a.reason|truncatechars:40 }}</td>
+          <td><span class="badge rounded-pill bg-{{ a.badge_class }}">{{ a.status }}</span></td>
+          <td>
+            <form method="post" action="{% url 'hospital:update_status' a.pk %}" class="d-flex gap-1">
+              {% csrf_token %}
+              {% if a.status == 'Pending' %}
+                <button name="status" value="Confirmed" class="btn btn-success btn-sm">Confirm</button>
+                <button name="status" value="Cancelled" class="btn btn-outline-danger btn-sm">Cancel</button>
+              {% elif a.status == 'Confirmed' %}
+                <button name="status" value="Completed" class="btn btn-primary btn-sm">Complete</button>
+                <button name="status" value="Cancelled" class="btn btn-outline-danger btn-sm">Cancel</button>
+              {% else %}<span class="text-muted small">Closed</span>{% endif %}
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No appointments found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

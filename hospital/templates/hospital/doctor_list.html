@@ -1,0 +1,217 @@
+{% extends "hospital/base.html" %}
+{% block title %}Find a Doctor · CarePoint{% endblock %}
+
+{% block hero %}
+<section class="cp-hero">
+  <div class="container">
+
+    <!-- Admin Login Button -->
+    <div class="d-flex justify-content-end mb-4">
+      <a href="/admin/" class="btn btn-outline-primary rounded-pill px-4">
+        <i class="bi bi-shield-lock"></i> Admin Login
+      </a>
+    </div>
+
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="cp-pill">
+          <i class="bi bi-shield-check"></i>
+          Trusted specialists · Easy online booking
+        </span>
+
+        <h1 class="display-5 fw-bold mt-3">
+          Book your doctor in
+          <span class="text-accent">under a minute</span>
+        </h1>
+
+        <p class="lead opacity-75">
+          Browse specialists, pick a free time slot and track your
+          appointment status — all in one place.
+        </p>
+
+        <div class="cp-search">
+          <i class="bi bi-search"></i>
+          <input type="text" id="doctor-search" class="form-control form-control-lg"
+            placeholder="Search doctor name or specialization…" value="{{ q }}">
+        </div>
+      </div>
+
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="cp-hero-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <i class="bi bi-calendar2-check fs-1"></i>
+            <div>
+              <div class="fw-bold fs-5">4 departments</div>
+              <div class="small opacity-75">
+                Cardiology · Pediatrics · Orthopedics · Neurology
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-clock-history fs-1"></i>
+            <div>
+              <div class="fw-bold fs-5">Live slot availability</div>
+              <div class="small opacity-75">
+                See booked and free slots instantly
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="d-flex flex-wrap gap-2 mb-4" id="dept-buttons">
+  <button class="cp-chip dept-btn active" data-dept="all">
+    <i class="bi bi-grid"></i> All
+  </button>
+
+  {% for d in departments %}
+  <button class="cp-chip dept-btn" data-dept="{{ d }}">
+    {{ d }}
+  </button>
+  {% endfor %}
+</div>
+
+
+{% if not doctors %}
+<div class="cp-empty">
+  <i class="bi bi-person-x"></i>
+  <h4>No doctors have been added yet</h4>
+
+  <p class="text-muted mb-0">
+    Run <code>python manage.py seed_doctors</code> in the terminal
+    to add sample doctors, or add them in
+    <a href="/admin/hospital/doctor/add/">the admin panel</a>.
+  </p>
+</div>
+{% endif %}
+
+
+<div class="row g-4" id="doctor-grid">
+
+  {% for doc in doctors %}
+
+  <div class="col-md-6 col-xl-4 doctor-card" data-dept="{{ doc.department }}"
+    data-text="{{ doc.name|lower }} {{ doc.specialization|lower }} {{ doc.department|lower }}">
+
+    <div class="cp-card doc-card h-100">
+
+      <div class="d-flex gap-3 align-items-center">
+        <div class="cp-avatar dept-{{ doc.department }}">
+          {{ doc.initials }}
+        </div>
+
+        <div>
+          <h5 class="mb-0">Dr. {{ doc.name }}</h5>
+          <div class="text-muted small">{{ doc.specialization }}</div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <span class="cp-dept dept-{{ doc.department }}">
+          <i class="bi {{ doc.icon }}"></i>
+          {{ doc.department }}
+        </span>
+      </div>
+
+      <div class="doc-meta mt-3">
+        <div>
+          <i class="bi bi-currency-rupee"></i>
+          <strong>{{ doc.consultation_fee|floatformat:0 }}</strong>
+          <span class="text-muted">consultation</span>
+        </div>
+
+        <div class="mt-2">
+          {% for day in doc.available_day_list %}
+          <span class="day-chip">{{ day }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+
+        <button class="btn btn-light flex-fill details-btn" data-bs-toggle="modal" data-bs-target="#doctorModal"
+          data-name="Dr. {{ doc.name }}" data-dept="{{ doc.department }}" data-spec="{{ doc.specialization }}"
+          data-fee="{{ doc.consultation_fee|floatformat:0 }}" data-days="{{ doc.available_days }}">
+          Details
+        </button>
+
+        <a class="btn btn-primary flex-fill" href="{% url 'hospital:book' %}?doctor={{ doc.id }}">
+          <i class="bi bi-calendar-plus"></i> Book
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+
+</div>
+
+
+<div id="no-results" class="cp-empty d-none">
+  <i class="bi bi-search"></i>
+  <h4>No doctors match your search</h4>
+  <p class="text-muted mb-0">
+    Try another name or choose “All”.
+  </p>
+</div>
+
+
+<div class="modal fade" id="doctorModal" tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content cp-modal">
+
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title" id="modal-name"></h5>
+
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <ul class="list-unstyled mb-0 cp-detail-list">
+
+          <li>
+            <i class="bi bi-hospital"></i>
+            <span>Department</span>
+            <strong id="modal-dept"></strong>
+          </li>
+
+          <li>
+            <i class="bi bi-award"></i>
+            <span>Specialization</span>
+            <strong id="modal-spec"></strong>
+          </li>
+
+          <li>
+            <i class="bi bi-currency-rupee"></i>
+            <span>Fee</span>
+            <strong>₹<span id="modal-fee"></span></strong>
+          </li>
+
+          <li>
+            <i class="bi bi-calendar-week"></i>
+            <span>Available</span>
+            <strong id="modal-days"></strong>
+          </li>
+
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+```

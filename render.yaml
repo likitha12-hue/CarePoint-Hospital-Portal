@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: hospital-appointment-portal-demo
+    runtime: python
+    rootDir: .
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python create_superuser.py"
+    startCommand: "python manage.py migrate && python manage.py seed_doctors && python create_superuser.py && gunicorn hospital_project.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: WEB_CONCURRENCY
+        value: 2
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false

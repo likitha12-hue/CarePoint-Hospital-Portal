@@ -1,0 +1,105 @@
+:root {
+  --cp-primary: #0d9488;
+  --cp-primary-dark: #0f766e;
+  --cp-ink: #0f172a;
+  --cp-bg: #f1f5f9;
+  --cp-card: #ffffff;
+  --cp-border: #e2e8f0;
+  --bs-primary: #0d9488;
+  --bs-primary-rgb: 13, 148, 136;
+  --bs-link-color: #0f766e;
+}
+body { font-family: "Inter", system-ui, sans-serif; background: var(--cp-bg); color: var(--cp-ink); min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+.btn-primary { --bs-btn-bg: var(--cp-primary); --bs-btn-border-color: var(--cp-primary);
+  --bs-btn-hover-bg: var(--cp-primary-dark); --bs-btn-hover-border-color: var(--cp-primary-dark);
+  --bs-btn-active-bg: var(--cp-primary-dark); --bs-btn-active-border-color: var(--cp-primary-dark); }
+.btn-outline-primary { --bs-btn-color: var(--cp-primary); --bs-btn-border-color: var(--cp-primary);
+  --bs-btn-hover-bg: var(--cp-primary); --bs-btn-hover-border-color: var(--cp-primary); --bs-btn-active-bg: var(--cp-primary); }
+.btn { border-radius: 10px; font-weight: 500; }
+.bg-primary { background-color: var(--cp-primary) !important; }
+.form-control, .form-select { border-radius: 10px; border-color: var(--cp-border); padding: .6rem .85rem; }
+.form-control:focus { border-color: var(--cp-primary); box-shadow: 0 0 0 .2rem rgba(13,148,136,.15); }
+
+/* navbar */
+.cp-nav { background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--cp-border); }
+.cp-brand { font-weight: 700; font-size: 1.3rem; color: var(--cp-ink) !important; display: flex; align-items: center; gap: .5rem; }
+.cp-logo { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #14b8a6, #0f766e); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.cp-logo.lg { width: 60px; height: 60px; font-size: 1.6rem; border-radius: 18px; }
+.cp-nav .nav-link { color: #475569; font-weight: 500; border-radius: 8px; padding: .5rem .8rem !important; }
+.cp-nav .nav-link:hover { color: var(--cp-primary-dark); background: #f0fdfa; }
+.cp-user { color: #475569; font-weight: 500; font-size: .95rem; }
+
+/* hero */
+.cp-hero { background: linear-gradient(135deg, #0f766e 0%, #0d9488 55%, #14b8a6 100%); color: #fff; padding: 4rem 0; }
+.cp-hero .text-accent { color: #fde68a; }
+.cp-pill { background: rgba(255,255,255,.18); padding: .4rem .9rem; border-radius: 999px; font-size: .85rem; }
+.cp-search { position: relative; max-width: 540px; margin-top: 1.5rem; }
+.cp-search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; z-index: 5; }
+.cp-search input { padding-left: 2.8rem; border-radius: 14px; border: 0; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+.cp-hero-card { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); border-radius: 20px; padding: 1.75rem; backdrop-filter: blur(6px); }
+
+/* cards */
+.cp-card { background: var(--cp-card); border: 1px solid var(--cp-border); border-radius: 18px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(15,23,42,.04); }
+.doc-card, .appt { transition: transform .18s, box-shadow .18s; }
+.doc-card:hover, .appt:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(15,23,42,.10); }
+.cp-avatar { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; color: #fff; flex-shrink: 0; background: #64748b; }
+.cp-avatar.sm { width: 46px; height: 46px; font-size: .95rem; border-radius: 14px; }
+.cp-avatar.dept-Cardiology { background: linear-gradient(135deg,#f43f5e,#be123c); }
+.cp-avatar.dept-Pediatrics { background: linear-gradient(135deg,#f59e0b,#d97706); }
+.cp-avatar.dept-Orthopedics { background: linear-gradient(135deg,#3b82f6,#1d4ed8); }
+.cp-avatar.dept-Neurology { background: linear-gradient(135deg,#8b5cf6,#6d28d9); }
+.cp-dept { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600; padding: .25rem .65rem; border-radius: 999px; background: #e2e8f0; }
+.cp-dept.dept-Cardiology { background: #ffe4e6; color: #be123c; }
+.cp-dept.dept-Pediatrics { background: #fef3c7; color: #b45309; }
+.cp-dept.dept-Orthopedics { background: #dbeafe; color: #1d4ed8; }
+.cp-dept.dept-Neurology { background: #ede9fe; color: #6d28d9; }
+.day-chip { display: inline-block; font-size: .75rem; background: #f1f5f9; color: #475569; border-radius: 6px; padding: .15rem .5rem; margin: 0 .25rem .25rem 0; }
+
+/* chips */
+.cp-chip { border: 1px solid var(--cp-border); background: #fff; color: #334155; padding: .45rem 1rem; border-radius: 999px; font-size: .9rem; font-weight: 500; text-decoration: none; transition: .15s; cursor: pointer; }
+.cp-chip:hover { border-color: var(--cp-primary); color: var(--cp-primary-dark); }
+.cp-chip.active { background: var(--cp-primary); border-color: var(--cp-primary); color: #fff; }
+
+/* empty states + stats */
+.cp-empty { text-align: center; padding: 3rem 1rem; background: #fff; border: 2px dashed var(--cp-border); border-radius: 18px; }
+.cp-empty > i { font-size: 2.6rem; color: #94a3b8; }
+.cp-stat { background: #fff; border: 1px solid var(--cp-border); border-radius: 16px; padding: 1rem 1.2rem; display: flex; gap: .9rem; align-items: center; }
+.cp-stat > i { font-size: 1.8rem; }
+.cp-stat .n { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+.cp-stat .l { font-size: .8rem; color: #64748b; }
+
+/* booking */
+.step-title { font-weight: 600; font-size: 1.05rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem; }
+.step-title span { width: 28px; height: 28px; border-radius: 50%; background: var(--cp-primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; }
+.pick-card { display: block; border: 2px solid var(--cp-border); border-radius: 14px; padding: .9rem; cursor: pointer; transition: .15s; margin: 0; height: 100%; }
+.pick-card:hover { border-color: #5eead4; }
+.pick-card input { position: absolute; opacity: 0; pointer-events: none; }
+.pick-card .tick { color: var(--cp-primary); font-size: 1.3rem; opacity: 0; }
+.pick-card:has(input:checked) { border-color: var(--cp-primary); background: #f0fdfa; }
+.pick-card:has(input:checked) .tick { opacity: 1; }
+.slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: .6rem; }
+.slot-grid > div.text-muted, .slot-grid > .msg { grid-column: 1 / -1; }
+.slot-btn { border-radius: 10px; padding: .6rem; font-weight: 500; font-size: .9rem; border: 2px solid #99f6e4; background: #f0fdfa; color: var(--cp-primary-dark); transition: .15s; }
+.slot-btn:hover:not(:disabled) { background: #ccfbf1; }
+.slot-btn.selected { background: var(--cp-primary); border-color: var(--cp-primary); color: #fff; }
+.slot-btn:disabled { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; text-decoration: line-through; cursor: not-allowed; }
+.slot-legend { display: flex; gap: 1.2rem; font-size: .8rem; color: #64748b; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: .3rem; }
+.dot.available { background: #99f6e4; } .dot.booked { background: #cbd5e1; } .dot.selected { background: var(--cp-primary); }
+.summary { top: 90px; }
+.summary-list li { display: flex; justify-content: space-between; padding: .6rem 0; border-bottom: 1px dashed var(--cp-border); font-size: .95rem; }
+.summary-list li span { color: #64748b; }
+.summary-list li strong { text-align: right; }
+
+/* appointment + tables + modal */
+.appt-when { background: #f8fafc; border-radius: 10px; padding: .55rem .8rem; font-size: .9rem; font-weight: 500; }
+.cp-table thead th { background: #f8fafc; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #64748b; border-bottom: 1px solid var(--cp-border); padding: .9rem 1rem; }
+.cp-table td { padding: .9rem 1rem; }
+.cp-modal { border: 0; border-radius: 20px; }
+.cp-detail-list li { display: flex; align-items: center; gap: .75rem; padding: .7rem 0; border-bottom: 1px solid #f1f5f9; }
+.cp-detail-list li span { color: #64748b; margin-right: auto; }
+.cp-detail-list i { color: var(--cp-primary); }
+.cp-alert { border: 0; border-radius: 12px; box-shadow: 0 4px 14px rgba(15,23,42,.08); }
+.cp-footer { background: #fff; border-top: 1px solid var(--cp-border); padding: 1.2rem 0; font-size: .85rem; color: #64748b; }
+@media (max-width: 575px) { .cp-hero { padding: 2.5rem 0; } }

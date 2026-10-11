@@ -1,0 +1,78 @@
+{% extends "hospital/base.html" %}
+{% block title %}My Appointments · CarePoint{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h2 class="fw-bold mb-1">Hello, {{ user.first_name|default:user.username }} 👋</h2>
+    <p class="text-muted mb-0">Here are your appointments.</p>
+  </div>
+  <a href="{% url 'hospital:book' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New appointment</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-4"><div class="cp-stat"><i class="bi bi-calendar-event text-primary"></i><div><div class="n">{{ upcoming|length }}</div><div class="l">Upcoming</div></div></div></div>
+  <div class="col-4"><div class="cp-stat"><i class="bi bi-check-circle text-success"></i><div><div class="n">{{ completed_count }}</div><div class="l">Completed</div></div></div></div>
+  <div class="col-4"><div class="cp-stat"><i class="bi bi-x-circle text-danger"></i><div><div class="n">{{ cancelled_count }}</div><div class="l">Cancelled</div></div></div></div>
+</div>
+
+<h5 class="fw-bold mb-3">Upcoming appointments</h5>
+<div class="row g-3 mb-5">
+  {% for a in upcoming %}
+  <div class="col-md-6">
+    <div class="cp-card appt">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="d-flex gap-3 align-items-center">
+          <div class="cp-avatar sm dept-{{ a.doctor.department }}">{{ a.doctor.initials }}</div>
+          <div><div class="fw-semibold">Dr. {{ a.doctor.name }}</div><div class="small text-muted">{{ a.doctor.department }} · {{ a.doctor.specialization }}</div></div>
+        </div>
+        <span class="badge rounded-pill bg-{{ a.badge_class }}">{{ a.status }}</span>
+      </div>
+      <div class="appt-when mt-3"><i class="bi bi-calendar3"></i> {{ a.date|date:"D, d M Y" }} <i class="bi bi-clock ms-3"></i> {{ a.time_slot }}</div>
+      <div class="small text-muted mt-2"><i class="bi bi-chat-left-text"></i> {{ a.reason|truncatechars:90 }}</div>
+      <button class="btn btn-outline-danger btn-sm mt-3 cancel-btn" data-bs-toggle="modal" data-bs-target="#cancelModal"
+              data-action="{% url 'hospital:cancel' a.pk %}"><i class="bi bi-x-lg"></i> Cancel appointment</button>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="cp-empty"><i class="bi bi-calendar-x"></i><h5>No upcoming appointments</h5>
+    <a href="{% url 'hospital:book' %}" class="btn btn-primary mt-2">Book your first appointment</a></div></div>
+  {% endfor %}
+</div>
+
+<h5 class="fw-bold mb-3">Past &amp; closed</h5>
+<div class="cp-card p-0 overflow-hidden">
+  <div class="table-responsive">
+    <table class="table cp-table align-middle mb-0">
+      <thead><tr><th>Date</th><th>Time</th><th>Doctor</th><th>Status</th><th>Report</th></tr></thead>
+      <tbody>
+        {% for a in past %}
+        <tr>
+          <td>{{ a.date|date:"d M Y" }}</td><td>{{ a.time_slot }}</td><td>Dr. {{ a.doctor.name }}</td>
+          <td><span class="badge rounded-pill bg-{{ a.badge_class }}">{{ a.status }}</span></td>
+          <td class="small">{% if a.report %}{{ a.report.diagnosis|truncatechars:60 }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-4">Nothing here yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="cancelModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="post" id="cancel-form" class="modal-content cp-modal">
+      {% csrf_token %}
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-exclamation-circle text-danger display-4"></i>
+        <h5 class="mt-2">Cancel this appointment?</h5>
+        <p class="text-muted">The slot will be released for other patients.</p>
+        <div class="d-flex gap-2 justify-content-center">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Keep it</button>
+          <button type="submit" class="btn btn-danger">Yes, cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

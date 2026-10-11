@@ -1,0 +1,94 @@
+{% extends "hospital/base.html" %}
+{% block title %}Book Appointment · CarePoint{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h2 class="fw-bold mb-1">Book an appointment</h2>
+  <p class="text-muted mb-0">Four quick steps — your request is confirmed by our staff.</p>
+</div>
+
+{% if form.non_field_errors %}
+  <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ form.non_field_errors|join:" " }}</div>
+{% endif %}
+
+<form method="post" novalidate id="booking-form">
+  {% csrf_token %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+
+      <div class="cp-card mb-4">
+        <div class="step-title"><span>1</span> Choose a doctor</div>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button type="button" class="cp-chip dept-btn active" data-dept="all">All</button>
+          {% for d in departments %}<button type="button" class="cp-chip dept-btn" data-dept="{{ d }}">{{ d }}</button>{% endfor %}
+        </div>
+        {% if not doctors %}
+          <div class="alert alert-warning mb-0">No doctors available yet. Ask the admin to add doctors (or run <code>python manage.py seed_doctors</code>).</div>
+        {% endif %}
+        <div class="row g-3" id="doctor-picker">
+          {% for doc in doctors %}
+          <div class="col-md-6 pick-item" data-dept="{{ doc.department }}">
+            <label class="pick-card">
+              <input type="radio" name="doctor" value="{{ doc.id }}" class="doctor-radio"
+                     data-label="Dr. {{ doc.name }}" data-fee="{{ doc.consultation_fee|floatformat:0 }}"
+                     {% if selected_doctor == doc.id|stringformat:"s" %}checked{% endif %}>
+              <div class="d-flex gap-3 align-items-center">
+                <div class="cp-avatar sm dept-{{ doc.department }}">{{ doc.initials }}</div>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold">Dr. {{ doc.name }}</div>
+                  <div class="small text-muted">{{ doc.specialization }}</div>
+                  <div class="small mt-1"><span class="cp-dept dept-{{ doc.department }}"><i class="bi {{ doc.icon }}"></i> {{ doc.department }}</span>
+                    <span class="ms-2 fw-semibold">₹{{ doc.consultation_fee|floatformat:0 }}</span></div>
+                </div>
+                <i class="bi bi-check-circle-fill tick"></i>
+              </div>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+        {% for e in form.doctor.errors %}<div class="text-danger small mt-2">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="cp-card mb-4">
+        <div class="step-title"><span>2</span> Pick a date</div>
+        {{ form.date }}
+        <div class="form-text" id="day-hint"></div>
+        {% for e in form.date.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="cp-card mb-4">
+        <div class="step-title"><span>3</span> Select a time slot</div>
+        <div id="slot-grid" class="slot-grid" data-url="{% url 'hospital:slots' %}">
+          <div class="text-muted">Choose a doctor and a date to see available slots.</div>
+        </div>
+        {{ form.time_slot }}
+        {% for e in form.time_slot.errors %}<div class="text-danger small mt-2">{{ e }}</div>{% endfor %}
+        <div class="slot-legend mt-3">
+          <span><i class="dot available"></i> Available</span>
+          <span><i class="dot booked"></i> Booked</span>
+          <span><i class="dot selected"></i> Selected</span>
+        </div>
+      </div>
+
+      <div class="cp-card">
+        <div class="step-title"><span>4</span> Reason for visit</div>
+        {{ form.reason }}
+        {% for e in form.reason.errors %}<div class="text-danger small mt-1">{{ e }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="cp-card summary sticky-lg-top">
+        <h5 class="mb-3"><i class="bi bi-receipt"></i> Your booking</h5>
+        <ul class="list-unstyled summary-list">
+          <li><span>Doctor</span><strong id="sum-doctor">—</strong></li>
+          <li><span>Date</span><strong id="sum-date">—</strong></li>
+          <li><span>Time</span><strong id="sum-time">—</strong></li>
+          <li><span>Fee</span><strong id="sum-fee">—</strong></li>
+        </ul>
+        <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-check2-circle"></i> Request appointment</button>
+        <p class="small text-muted mt-3 mb-0">Status will be <span class="badge bg-warning text-dark">Pending</span> until staff confirm.</p>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
